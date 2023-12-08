@@ -131,7 +131,7 @@ app.post('/update-cart', async (req, res) => {
     const data = await response?.data?.data?.cartLinesAdd?.cart?.id
 
     if (data) {
-      res.status(200).json({ message: ' Data inserted' })
+      res.status(200).json({ message: ' Data updated' })
     } else {
       res.status(500).json({ message: 'Unable to insert data' })
     }
