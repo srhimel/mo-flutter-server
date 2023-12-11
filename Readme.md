@@ -113,6 +113,7 @@ Retrieve details of the user's shopping cart.
       "quantity": 3,
       "image": "https://cdn.shopify.com/s/files/1/0837/6480/5929/files/model02_30164e4d-16f9-47d3-a439-f83b8ed131fd.png?v=1701840816",
       "id": "gid://shopify/ProductVariant/47314486886697",
+      "lineId": "gid://shopify/CartLine/465469c9-0a01-4a53-88ec-7d0f05884f92?cart=Z2NwLXVzLWNlbnRyYWwxOjAxSEhCWDhWRU1KN0tBNDEyVlI3Wlc4ODFC",
       "variantTitle": "Black / L"
     }
   ]
