@@ -192,7 +192,7 @@ app.get('/cart', async (req, res) => {
         checkoutUrl: data.checkoutUrl,
         lines: data.lines.nodes.map((i) => {
           return {
-            title: i.merchandise.product.product,
+            title: i.merchandise.product.title,
             price: i.cost.totalAmount.amount,
             currency: i.cost.totalAmount.currencyCode,
             quantity: i.quantity,
