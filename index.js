@@ -22,25 +22,18 @@ mutation cartCreate {
   }
 }`
 
-const GQL_ENDPOINT = 'https://iiiiooii.myshopify.com/api/2023-10/graphql.json'
-
-const Axios = axios.create({
-  baseURL: GQL_ENDPOINT,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-
 app.get('/get-cart-id', async (req, res) => {
-  const { token } = req.headers
+  const { token, shop } = req.headers
+
   try {
-    const response = await Axios.post(
-      '',
+    const response = await axios.post(
+      `https://${shop}/api/2023-10/graphql.json`,
       {
         query: CREATE_CART
       },
       {
         headers: {
+          'Content-Type': 'application/json',
           'X-Shopify-Storefront-Access-Token': token
         }
       }
@@ -67,19 +60,19 @@ mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
 `
 
 app.post('/add-cart', async (req, res) => {
-  const { token } = req.headers
+  const { token, shop } = req.headers
   const input = req.body
 
-  console.log({ input })
   try {
-    const response = await Axios.post(
-      '',
+    const response = await axios.post(
+      `https://${shop}/api/2023-10/graphql.json`,
       {
         query: ADD_CART,
         variables: input
       },
       {
         headers: {
+          'Content-Type': 'application/json',
           'X-Shopify-Storefront-Access-Token': token
         }
       }
@@ -97,7 +90,7 @@ app.post('/add-cart', async (req, res) => {
 })
 
 const UPDATE_CART = `#graphql
-mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineInput!]!) {
+mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
   cartLinesUpdate(cartId: $cartId, lines: $lines) {
     cart {
       id
@@ -111,24 +104,25 @@ mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineInput!]!) {
 `
 
 app.post('/update-cart', async (req, res) => {
-  const { token } = req.headers
+  const { token, shop } = req.headers
   const input = req.body
 
-  console.log({ input })
   try {
-    const response = await Axios.post(
-      '',
+    const response = await axios.post(
+      `https://${shop}/api/2023-10/graphql.json`,
       {
         query: UPDATE_CART,
         variables: input
       },
       {
         headers: {
+          'Content-Type': 'application/json',
           'X-Shopify-Storefront-Access-Token': token
         }
       }
     )
-    const data = await response?.data?.data?.cartLinesAdd?.cart?.id
+
+    const data = await response?.data?.data?.cartLinesUpdate?.cart?.id
 
     if (data) {
       res.status(200).json({ message: ' Data updated' })
@@ -146,6 +140,7 @@ query GetCart($cartId: ID!) {
     checkoutUrl
     lines(first: 50) {
       nodes {
+        id
         quantity
         merchandise {
           ... on ProductVariant {
@@ -172,11 +167,11 @@ query GetCart($cartId: ID!) {
 `
 
 app.get('/cart', async (req, res) => {
-  const { token } = req.headers
+  const { token, shop } = req.headers
   const { cartId } = req.query
   try {
-    const response = await Axios.post(
-      '',
+    const response = await axios.post(
+      `https://${shop}/api/2023-10/graphql.json`,
       {
         query: GET_CART,
         variables: {
@@ -185,6 +180,7 @@ app.get('/cart', async (req, res) => {
       },
       {
         headers: {
+          'Content-Type': 'application/json',
           'X-Shopify-Storefront-Access-Token': token
         }
       }
@@ -202,6 +198,7 @@ app.get('/cart', async (req, res) => {
             quantity: i.quantity,
             image: i.merchandise.image.url,
             id: i.merchandise.id,
+            lineId: i.id,
             variantTitle: i.merchandise.title
           }
         })

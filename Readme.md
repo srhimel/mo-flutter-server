@@ -2,6 +2,12 @@
 
 This API provides endpoints for managing shopping cart data in a Shopify store.
 
+### headers
+```text
+  token: YOUR_ACCESS_TOKEN
+  shop: SHOPIFY_SHOP_URL
+```
+
 ## Get Cart ID
 
 ### Endpoint
@@ -68,7 +74,7 @@ Update the quantity of items in the shopping cart.
   "cartId": "gid://shopify/Cart/c1-602fa81fa9a25152d7977865ae7cebb0",
   "lines": [
     {
-      "merchandiseId": "gid://shopify/ProductVariant/47314486886697",
+      "id": "gid://shopify/CartLine/465469c9-0a01-4a53-88ec-7d0f05884f92?cart=Z2NwLXVzLWNlbnRyYWwxOjAxSEhCWDhWRU1KN0tBNDEyVlI3Wlc4ODFC",
       "quantity": 1
     }
   ]
