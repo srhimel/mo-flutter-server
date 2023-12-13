@@ -119,3 +119,9 @@ Retrieve details of the user's shopping cart.
   ]
 }
 ```
+
+- **GET** `/collections`
+- **GET** `/collections/:gid`
+- **GET** `/products`
+- **GET** `/new-products`
+- **GET** `/products/:gid`
