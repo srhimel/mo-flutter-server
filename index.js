@@ -230,7 +230,8 @@ const GET_COLLECTIONS = `#graphql
 `
 
 app.get('/collections', async (req, res) => {
-  const { accessToken, shop } = req.headers
+  const { token, shop } = req.headers
+  console.log({ token, shop })
   try {
     const response = await axios.post(
       `https://${shop}/admin/api/2023-10/graphql.json`,
@@ -240,7 +241,7 @@ app.get('/collections', async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': accessToken
+          'X-Shopify-Access-Token': token
         }
       }
     )
@@ -292,7 +293,7 @@ query collection($id: ID!){
 `
 
 app.get('/collections/:gid', async (req, res) => {
-  const { accessToken, shop } = req.headers
+  const { token, shop } = req.headers
   const { gid } = req.params
   console.log({ gid })
   try {
@@ -307,7 +308,7 @@ app.get('/collections/:gid', async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': accessToken
+          'X-Shopify-Access-Token': token
         }
       }
     )
@@ -352,7 +353,7 @@ query products {
 `
 
 app.get('/products', async (req, res) => {
-  const { accessToken, shop } = req.headers
+  const { token, shop } = req.headers
   try {
     const response = await axios.post(
       `https://${shop}/admin/api/2023-10/graphql.json`,
@@ -362,7 +363,7 @@ app.get('/products', async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': accessToken
+          'X-Shopify-Access-Token': token
         }
       }
     )
@@ -407,7 +408,7 @@ query products {
 `
 
 app.get('/new-products', async (req, res) => {
-  const { accessToken, shop } = req.headers
+  const { token, shop } = req.headers
   try {
     const response = await axios.post(
       `https://${shop}/admin/api/2023-10/graphql.json`,
@@ -417,7 +418,7 @@ app.get('/new-products', async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': accessToken
+          'X-Shopify-Access-Token': token
         }
       }
     )
@@ -464,7 +465,7 @@ query product($id: ID!) {
 `
 
 app.get('/products/:gid', async (req, res) => {
-  const { accessToken, shop } = req.headers
+  const { token, shop } = req.headers
   const { gid } = req.params
   console.log({ gid })
   try {
@@ -479,7 +480,7 @@ app.get('/products/:gid', async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': accessToken
+          'X-Shopify-Access-Token': token
         }
       }
     )
