@@ -212,6 +212,285 @@ app.get('/cart', async (req, res) => {
   }
 })
 
+const GET_COLLECTIONS = `#graphql
+{
+  collections(first: 10) {
+    nodes {
+      id
+      image {
+        url
+      }
+      title
+      productsCount
+      sortOrder
+      description(truncateAt: 10)
+    }
+  }
+}
+`
+
+app.get('/collections', async (req, res) => {
+  const { accessToken, shop } = req.headers
+  try {
+    const response = await axios.post(
+      `https://${shop}/admin/api/2023-10/graphql.json`,
+      {
+        query: GET_COLLECTIONS
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': accessToken
+        }
+      }
+    )
+    const data = await response?.data?.data?.collections?.nodes
+
+    res.status(200).json(data)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
+const GET_COLLECTION = `#graphql
+query collection($id: ID!){
+  collection(id: $id) {
+    title
+    products(first: 10) {
+      nodes {
+        handle
+        images(first: 10) {
+          nodes {
+            url
+          }
+        }
+        featuredImage {
+          url
+        }
+        title
+        priceRangeV2 {
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        variants(first: 10) {
+          nodes {
+            price
+            title
+            id
+          }
+        }
+      }
+    }
+  }
+}
+`
+
+app.get('/collections/:gid', async (req, res) => {
+  const { accessToken, shop } = req.headers
+  const { gid } = req.params
+  console.log({ gid })
+  try {
+    const response = await axios.post(
+      `https://${shop}/admin/api/2023-10/graphql.json`,
+      {
+        query: GET_COLLECTION,
+        variables: {
+          id: gid
+        }
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': accessToken
+        }
+      }
+    )
+    const data = await response?.data?.data?.collection
+
+    res.status(200).json(data)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
+const GET_PRODUCTS = `#graphql
+query products {
+  products(first: 10, query: "has_only_default_variant:true") {
+    nodes {
+      id
+      title
+      variants(first: 10) {
+        nodes {
+          id
+          price
+        }
+      }
+      featuredImage {
+        url
+      }
+      handle
+      id
+      priceRangeV2 {
+        maxVariantPrice {
+          amount
+          currencyCode
+        }
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+}
+`
+
+app.get('/products', async (req, res) => {
+  const { accessToken, shop } = req.headers
+  try {
+    const response = await axios.post(
+      `https://${shop}/admin/api/2023-10/graphql.json`,
+      {
+        query: GET_PRODUCTS
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': accessToken
+        }
+      }
+    )
+    const data = await response?.data?.data?.products?.nodes
+
+    res.status(200).json(data)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
+const GET_NEW_PRODUCTS = `#graphql
+query products {
+  products(first: 10, reverse: true) {
+    nodes {
+      id
+      title
+      variants(first: 10) {
+        nodes {
+          id
+          price
+        }
+      }
+      featuredImage {
+        url
+      }
+      handle
+      id
+      priceRangeV2 {
+        maxVariantPrice {
+          amount
+          currencyCode
+        }
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+}
+`
+
+app.get('/new-products', async (req, res) => {
+  const { accessToken, shop } = req.headers
+  try {
+    const response = await axios.post(
+      `https://${shop}/admin/api/2023-10/graphql.json`,
+      {
+        query: GET_NEW_PRODUCTS
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': accessToken
+        }
+      }
+    )
+    const data = await response?.data?.data?.products?.nodes
+
+    res.status(200).json(data)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
+const GET_PRODUCT = `#graphql
+query product($id: ID!) {
+  product(id: $id) {
+    title
+    variants(first: 30) {
+      nodes {
+        price
+        image {
+          url
+        }
+        title
+        displayName
+      }
+    }
+    productType
+    descriptionHtml
+    featuredImage {
+      url
+    }
+    hasOnlyDefaultVariant
+    images(first: 10) {
+      nodes {
+        url
+      }
+    }
+    productCategory {
+      productTaxonomyNode {
+        fullName
+      }
+    }
+  }
+}
+`
+
+app.get('/products/:gid', async (req, res) => {
+  const { accessToken, shop } = req.headers
+  const { gid } = req.params
+  console.log({ gid })
+  try {
+    const response = await axios.post(
+      `https://${shop}/admin/api/2023-10/graphql.json`,
+      {
+        query: GET_PRODUCT,
+        variables: {
+          id: gid
+        }
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': accessToken
+        }
+      }
+    )
+    const data = await response?.data?.data?.product
+
+    res.status(200).json(data)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`)
