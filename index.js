@@ -229,30 +229,6 @@ const GET_COLLECTIONS = `#graphql
 }
 `
 
-app.get('/collections', async (req, res) => {
-  const { token, shop } = req.headers
-  console.log({ token, shop })
-  try {
-    const response = await axios.post(
-      `https://${shop}/admin/api/2023-10/graphql.json`,
-      {
-        query: GET_COLLECTIONS
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': token
-        }
-      }
-    )
-    const data = await response?.data?.data?.collections?.nodes
-
-    res.status(200).json(data)
-  } catch (error) {
-    res.status(500).json(error)
-  }
-})
-
 const GET_COLLECTION = `#graphql
 query collection($id: ID!){
   collection(id: $id) {
@@ -292,31 +268,55 @@ query collection($id: ID!){
 }
 `
 
-app.get('/collections/:gid', async (req, res) => {
+app.get('/collections', async (req, res) => {
   const { token, shop } = req.headers
-  const { gid } = req.query
-  console.log({ gid })
-  try {
-    const response = await axios.post(
-      `https://${shop}/admin/api/2023-10/graphql.json`,
-      {
-        query: GET_COLLECTION,
-        variables: {
-          id: gid
-        }
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': token
-        }
-      }
-    )
-    const data = await response?.data?.data?.collection
 
-    res.status(200).json(data)
-  } catch (error) {
-    res.status(500).json(error)
+  const { gid } = req.query
+  if (gid) {
+    console.log({ gid })
+    try {
+      const response = await axios.post(
+        `https://${shop}/admin/api/2023-10/graphql.json`,
+        {
+          query: GET_COLLECTION,
+          variables: {
+            id: gid
+          }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': token
+          }
+        }
+      )
+      const data = await response?.data?.data?.collection
+
+      res.status(200).json(data)
+    } catch (error) {
+      res.status(500).json(error)
+    }
+  } else {
+    console.log({ token, shop })
+    try {
+      const response = await axios.post(
+        `https://${shop}/admin/api/2023-10/graphql.json`,
+        {
+          query: GET_COLLECTIONS
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': token
+          }
+        }
+      )
+      const data = await response?.data?.data?.collections?.nodes
+
+      res.status(200).json(data)
+    } catch (error) {
+      res.status(500).json(error)
+    }
   }
 })
 
@@ -352,26 +352,87 @@ query products {
 }
 `
 
+const GET_PRODUCT = `#graphql
+query product($id: ID!) {
+  product(id: $id) {
+    title
+    variants(first: 30) {
+      nodes {
+        price
+        image {
+          url
+        }
+        title
+        displayName
+      }
+    }
+    productType
+    descriptionHtml
+    featuredImage {
+      url
+    }
+    hasOnlyDefaultVariant
+    images(first: 10) {
+      nodes {
+        url
+      }
+    }
+    productCategory {
+      productTaxonomyNode {
+        fullName
+      }
+    }
+  }
+}
+`
+
 app.get('/products', async (req, res) => {
   const { token, shop } = req.headers
-  try {
-    const response = await axios.post(
-      `https://${shop}/admin/api/2023-10/graphql.json`,
-      {
-        query: GET_PRODUCTS
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': token
+  const { gid } = req.query
+  if (gid) {
+    console.log({ gid })
+    try {
+      const response = await axios.post(
+        `https://${shop}/admin/api/2023-10/graphql.json`,
+        {
+          query: GET_PRODUCT,
+          variables: {
+            id: gid
+          }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': token
+          }
         }
-      }
-    )
-    const data = await response?.data?.data?.products?.nodes
+      )
+      const data = await response?.data?.data?.product
 
-    res.status(200).json(data)
-  } catch (error) {
-    res.status(500).json(error)
+      res.status(200).json(data)
+    } catch (error) {
+      res.status(500).json(error)
+    }
+  } else {
+    try {
+      const response = await axios.post(
+        `https://${shop}/admin/api/2023-10/graphql.json`,
+        {
+          query: GET_PRODUCTS
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': token
+          }
+        }
+      )
+      const data = await response?.data?.data?.products?.nodes
+
+      res.status(200).json(data)
+    } catch (error) {
+      res.status(500).json(error)
+    }
   }
 })
 
@@ -423,68 +484,6 @@ app.get('/new-products', async (req, res) => {
       }
     )
     const data = await response?.data?.data?.products?.nodes
-
-    res.status(200).json(data)
-  } catch (error) {
-    res.status(500).json(error)
-  }
-})
-
-const GET_PRODUCT = `#graphql
-query product($id: ID!) {
-  product(id: $id) {
-    title
-    variants(first: 30) {
-      nodes {
-        price
-        image {
-          url
-        }
-        title
-        displayName
-      }
-    }
-    productType
-    descriptionHtml
-    featuredImage {
-      url
-    }
-    hasOnlyDefaultVariant
-    images(first: 10) {
-      nodes {
-        url
-      }
-    }
-    productCategory {
-      productTaxonomyNode {
-        fullName
-      }
-    }
-  }
-}
-`
-
-app.get('/products/:gid', async (req, res) => {
-  const { token, shop } = req.headers
-  const { gid } = req.query
-  console.log({ gid })
-  try {
-    const response = await axios.post(
-      `https://${shop}/admin/api/2023-10/graphql.json`,
-      {
-        query: GET_PRODUCT,
-        variables: {
-          id: gid
-        }
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': token
-        }
-      }
-    )
-    const data = await response?.data?.data?.product
 
     res.status(200).json(data)
   } catch (error) {
