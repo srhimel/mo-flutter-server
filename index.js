@@ -294,7 +294,7 @@ query collection($id: ID!){
 
 app.get('/collections/:gid', async (req, res) => {
   const { token, shop } = req.headers
-  const { gid } = req.params
+  const { gid } = req.query
   console.log({ gid })
   try {
     const response = await axios.post(
@@ -466,7 +466,7 @@ query product($id: ID!) {
 
 app.get('/products/:gid', async (req, res) => {
   const { token, shop } = req.headers
-  const { gid } = req.params
+  const { gid } = req.query
   console.log({ gid })
   try {
     const response = await axios.post(
