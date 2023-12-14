@@ -1,6 +1,5 @@
 import axios from 'axios'
 import express from 'express'
-import { ICountDownTimerWidget, ISearchWidget } from './types/widgetTypes'
 
 const app = express()
 const port = 8000
