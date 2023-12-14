@@ -343,8 +343,12 @@ query products {
       featuredImage {
         url
       }
-      handle
-      id
+      images(first: 10) {
+        nodes {
+          url
+        }
+      }
+      descriptionHtml
       priceRangeV2 {
         maxVariantPrice {
           amount
