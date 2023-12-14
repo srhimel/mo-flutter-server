@@ -1,5 +1,6 @@
 import axios from 'axios'
 import express from 'express'
+import { ICountDownTimerWidget, ISearchWidget } from './types/widgetTypes'
 
 const app = express()
 const port = 8000
@@ -331,6 +332,12 @@ query products {
         nodes {
           id
           price
+          weight
+          selectedOptions{
+            name
+            value
+          }
+          compareAtPrice
         }
       }
       featuredImage {
@@ -359,12 +366,18 @@ query product($id: ID!) {
     title
     variants(first: 30) {
       nodes {
+        id
         price
         image {
           url
         }
         title
-        displayName
+        weight
+        selectedOptions{
+          name
+          value
+        }
+        compareAtPrice
       }
     }
     productType
@@ -447,6 +460,12 @@ query products {
         nodes {
           id
           price
+          weight
+          selectedOptions{
+            name
+            value
+          }
+          compareAtPrice
         }
       }
       featuredImage {
@@ -491,6 +510,47 @@ app.get('/new-products', async (req, res) => {
     res.status(500).json(error)
   }
 })
+
+// app.get('/homepage', async (req, res) => {
+//   const { token, shop } = req.headers
+//   try {
+//     const search: ISearchWidget = {
+//       type: 'Search',
+//       properties: 'Search',
+//       position: 0
+//     }
+
+//     const countDown: ICountDownTimerWidget = {
+//       type: 'CountdownTimer',
+//       position: 1,
+//       properties: {
+//         endDate: new Date('2023-12-24T20:00:00'),
+//         headline: '50% Off Sale Ends in'
+//       },
+//       schedule: false
+//     }
+
+//     const productSlider:
+
+//     const response = await axios.post(
+//       `https://${shop}/admin/api/2023-10/graphql.json`,
+//       {
+//         query: GET_NEW_PRODUCTS
+//       },
+//       {
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'X-Shopify-Access-Token': token
+//         }
+//       }
+//     )
+//     const data = await response?.data?.data?.products?.nodes
+
+//     res.status(200).json(data)
+//   } catch (error) {
+//     res.status(500).json(error)
+//   }
+// })
 
 // Start the server
 app.listen(port, () => {
