@@ -235,6 +235,7 @@ query collection($id: ID!){
     title
     products(first: 10) {
       nodes {
+        id
         handle
         images(first: 10) {
           nodes {
