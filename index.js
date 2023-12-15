@@ -188,6 +188,12 @@ app.get('/cart', async (req, res) => {
     const data = await response?.data?.data?.cart
 
     if (data) {
+      const subTotal = data.lines.nodes.reduce(
+        (a, b) => a + b?.cost?.totalAmount?.amount,
+        0
+      )
+      const cartQuantity = data.lines.nodes.reduce((a, b) => a + b?.quantity, 0)
+
       const cart = {
         checkoutUrl: data.checkoutUrl,
         lines: data.lines.nodes.map((i) => {
@@ -199,7 +205,9 @@ app.get('/cart', async (req, res) => {
             image: i.merchandise.image.url,
             id: i.merchandise.id,
             lineId: i.id,
-            variantTitle: i.merchandise.title
+            variantTitle: i.merchandise.title,
+            cartQuantity,
+            subTotal
           }
         })
       }
@@ -342,12 +350,6 @@ query products {
       featuredImage {
         url
       }
-      images(first: 10) {
-        nodes {
-          url
-        }
-      }
-      descriptionHtml
       priceRangeV2 {
         maxVariantPrice {
           amount
